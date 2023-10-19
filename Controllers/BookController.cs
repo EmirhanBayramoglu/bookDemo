@@ -52,23 +52,49 @@ namespace bookDemo.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, [FromBody]Book book)
+        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, [FromBody] Book book)
         {
             var entity = ApplicationContext.Books.Find(x => x.Id.Equals(id));
-            
+
             //girilen id'ye denk gelen bir obje var mı kontrol ediyoruz
             if (entity == null)
                 return NotFound(); //404
 
-            if(id != book.Id)
+            if (id != book.Id)
                 return BadRequest(); //400
 
             ApplicationContext.Books.Remove(entity);
             book.Id = entity.Id;
             ApplicationContext.Books.Add(book);
             return Ok(book);
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteAllBooks()
+        {
+            ApplicationContext.Books.Clear();
+            return NoContent(); //204
+        }
 
 
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteOneBooks([FromRoute(Name = "id")] int id)
+        {
+
+
+            var entity = ApplicationContext.
+                Books.Where(x => x.Id.Equals(id)).SingleOrDefault();
+            //SingleOrDefault LINQ içerisinde arama metodudur (sadece 1 tane olanı getir yada defualt değeri döndür demek)
+
+            if (entity == null)  
+                return NotFound(new
+                {
+                    StatusCode = 404,
+                    message = $"Book with id:{id} could not found."
+                }); //404
+
+            ApplicationContext.Books.Remove(entity);
+            return NoContent(); //204
         }
 
 
