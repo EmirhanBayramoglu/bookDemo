@@ -1,6 +1,7 @@
 ﻿using bookDemo.Data;
 using bookDemo.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bookDemo.Controllers
@@ -97,6 +98,21 @@ namespace bookDemo.Controllers
             return NoContent(); //204
         }
 
+        //patch olayı swagger üzerinde biraz garip pdf bakarak değer verme olayını anlayabilirsin
+        [HttpPatch("{id:int}")]
+        public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] int id
+            ,[FromBody]JsonPatchDocument<Book>  bookPatch)
+        {
+            //check entity
+            var entity = ApplicationContext.Books.Find(x => x.Id.Equals(id));
+
+            if (entity == null)
+                return BadRequest(); //400
+
+            bookPatch.ApplyTo(entity);
+            return NoContent(); //204
+
+        }
 
     }
 }
