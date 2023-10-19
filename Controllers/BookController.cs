@@ -20,7 +20,7 @@ namespace bookDemo.Controllers
         //Aynı anda 2 tane get direkt olarak kullanılamaz o yüzden parametre kullanıyoruz
         //FromeRoute eklenmesi mecbur birşey değildir ama bazı karışıklıkları eklenebilir
         [HttpGet("{id:int}")]
-        public IActionResult GetOneBook([FromRoute(Name ="id")] int id)
+        public IActionResult GetOneBook([FromRoute(Name = "id")] int id)
         {
             var book = ApplicationContext.
                 Books.Where(x => x.Id.Equals(id)).SingleOrDefault();
@@ -49,6 +49,26 @@ namespace bookDemo.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPut("{id:int}")]
+        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, [FromBody]Book book)
+        {
+            var entity = ApplicationContext.Books.Find(x => x.Id.Equals(id));
+            
+            //girilen id'ye denk gelen bir obje var mı kontrol ediyoruz
+            if (entity == null)
+                return NotFound(); //404
+
+            if(id != book.Id)
+                return BadRequest(); //400
+
+            ApplicationContext.Books.Remove(entity);
+            book.Id = entity.Id;
+            ApplicationContext.Books.Add(book);
+            return Ok(book);
+
+
         }
 
 
