@@ -19,7 +19,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "https": {
+    "bookDemo": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
